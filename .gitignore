@@ -41,3 +41,34 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+MyPlugin1/build/objRx64/MyPlugin1/idrc_LOCR/300.idrc
+*.idrc
+MyPlugin1/build/objRx64/MyPlugin1/MyPlugin1.log
+*.log
+MyPlugin1/build/objRx64/MyPlugin1/MyPlugin1.tlog/MyPlugin1.lastbuildstate
+*.props
+MyPlugin1/build/objRx64/MyPlugin1/frFilePath
+*.tlog
+*.txt
+MyPlugin1/MyPlugin1.sdf
+*.suo
+MyPlugin1/MyPlugin1.vcxproj
+*.filters
+MyPlugin1/MyPlugin1.xcodeproj/project.pbxproj
+*.rsp
+MyPlugin1/MyPlugin1Plugin.xcconfig
+*.xcconfig
+*.pbxproj
+*.obj
+*.ipch
+*.user
+*.vcxproj
+*.sdf
+*.opensdf
+*.pln
+*.pdb
+*.res
+*.pch
+*.fres
+MyPlugin2/build/objRx64/MyPlugin2/frFilePath
+*.rc
