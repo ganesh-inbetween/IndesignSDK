@@ -11,8 +11,10 @@
 #include "ISpreadList.h"
 #include "ISpread.h"
 #include "PMString.h"
+#include "IHierarchy.h"
 #include <stdlib.h>
 #include <string.h>
+#include "UIDList.h"
 
 #include "MyPlugin2Responder.h"
 #include "MyPlugin2ID.h"
@@ -80,15 +82,41 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 			UIDRef spreadUIDRef(database, spreadList->GetNthSpreadUID(0));
 			InterfacePtr<ISpread> spread(spreadUIDRef, UseDefaultIID());
 
-			int noOfPages = spread->GetNumPages();
-			char buffer[10];
-			itoa(noOfPages, buffer, 10);
-			//PMString s = new PMString(buffer, -1);
-			
-			CAlert::InformationAlert(buffer);
+			int noOfPages = spread->GetNumPages();// get number of pages
+			PMString str1 = "";
+			str.AppendNumber(noOfPages);
+			CAlert::InformationAlert(str1);
 		
+
+			UIDList itemsOnPage(database);
+			const bool16 bIncludePage = kFalse;
+			const bool16 bIncludePasteboard = kFalse;
+			spread->GetItemsOnPage(0, &itemsOnPage, bIncludePage,
+				bIncludePasteboard);
+
+			int itemCount = itemsOnPage.Length(); // get number of items on page
+			PMString str2 = "";
+			str.AppendNumber(itemCount);
+			CAlert::InformationAlert(str2);
+
+
+			UIDRef pageitemUIDRef = UIDList.GetRef(0); 
+			InterfacePtr<IFrameType> frameType(pageitemUIDRef, UseDefaultIID());
+
+			
+			//InterfacePtr<IHierarchy> spreadHierarchy(spreadUIDRef, UseDefaultIID());
+			
 		break;
 	}
 	
 	}
+};
+
+void MyPlugin2Responder::VisitChildren(IHierarchy* parent) {
+	int childCount = parent->GetChildCount();
+	PMString str = "";
+	str.AppendNumber(childCount);
+	CAlert::InformationAlert(str);
+
+
 }

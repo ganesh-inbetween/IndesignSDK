@@ -18,7 +18,7 @@ public:
 	~MyPlugin2Responder();
 
 	virtual void Respond(ISignalMgr* signalMgr);
-
+	void VisitChildren(IHierarchy* parent);
 };
 
 
