@@ -24,3 +24,4 @@ REGISTER_PMINTERFACE(MyPlugin2StartupShutdownServiceImpl, kMyPlugin2StartupShutd
 REGISTER_PMINTERFACE(MyPlugin2Observer, kMyPlugin2ObserverImpl)
 REGISTER_PMINTERFACE(MyPlugin2Responder, kMyPlugin2ResponderImpl); 
 REGISTER_PMINTERFACE(MyPlugin2Responder, kMyPlugin2ServiceProviderImpl);
+REGISTER_PMINTERFACE(MyPlugin2SelectionObserver, kMyPlugin2SelectionObserverImpl);

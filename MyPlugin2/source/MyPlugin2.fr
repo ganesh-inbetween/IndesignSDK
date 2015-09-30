@@ -115,6 +115,15 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 	    	 IID_IRESPONDER,	kMyPlugin2ResponderImpl,
 			 IID_IK2SERVICEPROVIDER, kMyPlugin2ServiceProviderImpl,
 		 }
+	},
+
+	AddIn
+	{
+	    kSessionBoss,
+		kInvalidClass,
+		{
+		IID_IMYSELECTIONOBSERVER,	kMyPlugin2SelectionObserverImpl,
+		}
 	}
 
 }}};

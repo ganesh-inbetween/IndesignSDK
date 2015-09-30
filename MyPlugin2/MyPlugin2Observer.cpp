@@ -27,7 +27,7 @@ void  MyPlugin2Observer::AutoAttach()
 				subject->AttachObserver(ISubject::kRegularAttachment, this, IID_IHIERARCHY_DOCUMENT, IID_IMYOBSERVER);
 			}
 		}
-		CAlert::InformationAlert("AUTO Attach");
+	//	CAlert::InformationAlert("AUTO Attach");
 	} while (false);
 }
 
@@ -56,5 +56,5 @@ void MyPlugin2Observer::Update(const ClassID& theChange, ISubject* theSubject,
 	const PMIID& protocol, void* changedBy)
 {
 
-	CAlert::InformationAlert("Update");
+	//CAlert::InformationAlert("Update");
 }
