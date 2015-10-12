@@ -22,6 +22,11 @@
 #include "IXMLReferenceData.h"
 #include "XMLReference.h"
 #include "IIDXMLElement.h"
+#include "ITableSelectionSuite.h"
+#include "ITableLayout.h"
+#include "ITableModel.h"
+#include "ITableFrame.h"
+#include "IFrameType.h"
 
 CREATE_PMINTERFACE(MyPlugin2SelectionObserver, kMyPlugin2SelectionObserverImpl)
 
@@ -94,24 +99,19 @@ void MyPlugin2SelectionObserver::HandleSelectionChanged(const ISelectionMessage*
 				// obtain xml element from xml reference
 				InterfacePtr<IIDXMLElement> xmlElement(xmlRef.Instantiate());
 				if (xmlElement != nil) {
-					
 					childCountString.AppendNumber(xmlElement->GetChildCount());
 					XMLReference childRef = xmlElement->GetNthChild(0);
 					InterfacePtr<IIDXMLElement> childXMLElement(childRef.Instantiate());
 					if (childXMLElement != nil){
-
 						tagUID = childXMLElement->GetTagUID();
 						tagName = childXMLElement->GetTagString();
 						Utils<IXMLUtils>()->GetElementMarkerPositions(childXMLElement, &startPosXML, &endPosXML);
-
-
 					}
-				
-				}
+		    	}
 
 			}
 							
-		}
+		} // for end
 		int length = rangeData.Length();
 		if (length >= 1) {
 			PMString textFrameContentLength = "selected content length-";
@@ -138,6 +138,83 @@ void MyPlugin2SelectionObserver::HandleSelectionChanged(const ISelectionMessage*
 			else
 			{
 				CAlert::WarningAlert("Selection not inside tag- " + tagName);
+			}
+		}
+	}
+	// --------:: Table selection ::---------
+	InterfacePtr<ITableSelectionSuite> iTableSelectionSuite(fCurrentSelection, UseDefaultIID());
+	if (iTableSelectionSuite == nil)
+		return;
+
+	InterfacePtr<const IIntegratorTarget> iIntegratorTarget_table(iTableSelectionSuite, UseDefaultIID());
+	if (iIntegratorTarget_table == nil)
+		return;
+
+	UIDRef 	tableUIDRef;
+	GridArea tableGridArea;
+	PMString PMRowCount = "Total no of rows-";
+	PMString PMColCount = "Total no of cols-";
+	std::auto_ptr<IIntegratorTarget::TargetSuiteCollection> selectionSuites_table(iIntegratorTarget_table->GetTarget(ITableTarget::kDefaultIID));
+	for (IIntegratorTarget::TargetSuiteCollection::size_type i = 0; i < selectionSuites_table->size(); i++)
+	{
+		ITableTarget* target = (ITableTarget*)selectionSuites_table->at(i).get();
+		if (!target)
+			continue;
+		tableUIDRef = target->GetModel();
+		if (tableUIDRef != UIDRef(nil, kInvalidUID))
+		{
+			CAlert::WarningAlert("Table selection occured");
+			tableGridArea = target->GetRange();
+		}
+		InterfacePtr<ITableModel>tableModel(target->QueryModel());
+		if (tableModel != nil) {
+			RowRange totalRows = tableModel->GetTotalRows();
+			ColRange totalCols = tableModel->GetTotalCols();
+			int rowCount = totalRows.count;
+			int colCount = totalCols.count;
+			PMRowCount.AppendNumber(rowCount);
+			PMColCount.AppendNumber(colCount);
+			CAlert::InformationAlert(PMRowCount);
+			CAlert::InformationAlert(PMColCount);
+
+			InterfacePtr<ITableLayout> tableLayout(tableModel, UseDefaultIID());
+			if (tableLayout == nil) {
+				break;
+			}
+			CAlert::InformationAlert("table layout present");
+			ITableLayout::frame_iterator frameIter = tableLayout->begin_frame_iterator();
+			CAlert::InformationAlert("Frame Iterator ppresent");
+			
+			CAlert::InformationAlert("Frame Iterator present");
+			
+			InterfacePtr<ITableFrame> tableFrame(frameIter->QueryFrame());
+			CAlert::InformationAlert("table frame ppresent");
+			if (tableFrame == nil){
+				break;
+			}
+			CAlert::InformationAlert("table frame present");
+			UIDRef tableContainerUIDRef = tableFrame->GetFrameRef();
+			if (tableContainerUIDRef == nil){
+				break;
+			}
+			CAlert::InformationAlert("table container UIDRef present");
+			InterfacePtr<IFrameType> frameType(tableContainerUIDRef, UseDefaultIID());
+			//if (frameType == nil) {
+				//break;
+			//}
+			CAlert::InformationAlert("container frame present");
+			PMString textFrameType = "Is container , text frame-";   // TYPE OF TEXT FRAME
+			
+		//	bool isTextFrame = frameType->IsTextFrame();
+			CAlert::InformationAlert("Is text frame success");
+
+			if (true) {
+				textFrameType.Append("YES");
+				CAlert::InformationAlert(textFrameType);
+			}
+			else {
+				textFrameType.Append("NO");
+				CAlert::InformationAlert(textFrameType);
 			}
 		}
 	}

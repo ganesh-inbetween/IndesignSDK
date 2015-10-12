@@ -99,7 +99,7 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 	
 	 AddIn
 	{
-	    kDocBoss,
+	   kDocWorkspaceBoss,
 		kInvalidClass,
 		{
 

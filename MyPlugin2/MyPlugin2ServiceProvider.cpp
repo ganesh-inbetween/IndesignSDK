@@ -31,7 +31,7 @@ void MyPlugin2ServiceProvider::addResponder()
 	fSupportedServiceIDs.push_back(kAfterNewDocSignalResponderService);
 	fSupportedServiceIDs.push_back(kAfterOpenDocSignalResponderService);
 	fSupportedServiceIDs.push_back(kAfterSaveDocSignalResponderService);
-	
+	fSupportedServiceIDs.push_back(kDeleteCharStyleRespService);
 };
 
 

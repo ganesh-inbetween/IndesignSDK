@@ -21,7 +21,6 @@
 #include "XMLReference.h"
 #include "IXMLReferenceData.h"
 #include "textiterator.h"
-
 #include "MyPlugin2Responder.h"
 #include "MyPlugin2ID.h"
 
@@ -49,7 +48,7 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 		InterfacePtr<IDocumentSignalData> documentSignalData(signalMgr, UseDefaultIID());
 		UIDRef docUIDRef = documentSignalData->GetDocument();
 		InterfacePtr<IDocument> document(docUIDRef, UseDefaultIID());
-	    /*This observer is on document level and will observer the new page item/ copy page item events
+		/*This observer is on document level and will observer the new page item/ copy page item events
 		*/
 		InterfacePtr<IObserver> docObserver(docUIDRef, IID_IMYOBSERVER);
 		//InterfacePtr<IObserver> myObserver(GetExecutionContextSession(), IID_IMYOBSERVER);
@@ -63,6 +62,7 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 			CAlert::InformationAlert("nill!!!!!");
 
 		}
+
 		break;
 	}
 	case kAfterOpenDocSignalResponderService://99
@@ -81,95 +81,122 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 		UIDRef docUIDRef = documentSignalData->GetDocument();
 		InterfacePtr<IDocument> document(docUIDRef, UseDefaultIID());
 
+		CAlert::InformationAlert("Before workspace");
+		UIDRef docWorkSpaceRef = document->GetDocWorkSpace();
+
+		if (docWorkSpaceRef != nil)
+		{
+			CAlert::InformationAlert("Auto attached doc ws1 called");
+			InterfacePtr<IObserver> docWorkSpaceObserver(docWorkSpaceRef, IID_IMYOBSERVER);
+			CAlert::InformationAlert("Auto attached doc ws called");
+			if (docWorkSpaceObserver != nil) {
+				docWorkSpaceObserver->AutoAttach();
+			}
+			else {
+				CAlert::InformationAlert("docworkspaceRef is nil");
+			}
+
+		}
+		else {
+			CAlert::InformationAlert("nill!!!!!");
+
+		}
+		break;
+
 		InterfacePtr<ISpreadList> spreadList(document, UseDefaultIID()); // GET SPREAD LIST USING DOCUMENT POINTER
 		IDataBase* database = docUIDRef.GetDataBase(); // GET DATABASE OF DOCUMENT.
 		int32 spreadCount = spreadList->GetSpreadCount();
-		
-			UIDRef spreadUIDRef(database, spreadList->GetNthSpreadUID(0));
-			InterfacePtr<ISpread> spread(spreadUIDRef, UseDefaultIID());
 
-			int noOfPages = spread->GetNumPages();// get number of pages
-			PMString str1 = "Number of pages - ";
-			str1.AppendNumber(noOfPages);
-			CAlert::InformationAlert(str1);
-		
+		UIDRef spreadUIDRef(database, spreadList->GetNthSpreadUID(0));
+		InterfacePtr<ISpread> spread(spreadUIDRef, UseDefaultIID());
 
-			UIDList itemsOnPage(database);
-			const bool16 bIncludePage = kFalse;
-			const bool16 bIncludePasteboard = kFalse;
-			spread->GetItemsOnPage(0, &itemsOnPage, bIncludePage,
-				bIncludePasteboard);
-
-			int itemCount = itemsOnPage.Length(); // get number of items on page
-			PMString str2 = "Number of items on page -";
-			str2.AppendNumber(itemCount);
-			CAlert::InformationAlert(str2);
+		int noOfPages = spread->GetNumPages();// get number of pages
+		PMString str1 = "Number of pages - ";
+		str1.AppendNumber(noOfPages);
+		CAlert::InformationAlert(str1);
 
 
-			UIDRef pageitemUIDRef = itemsOnPage.GetRef(0);
-			InterfacePtr<IFrameType> frameType(pageitemUIDRef, UseDefaultIID());
+		UIDList itemsOnPage(database);
+		const bool16 bIncludePage = kFalse;
+		const bool16 bIncludePasteboard = kFalse;
+		spread->GetItemsOnPage(0, &itemsOnPage, bIncludePage,
+			bIncludePasteboard);
 
-			//-------------------------------------------------------------------------------------------------------------
-			                                                 // GET XML REFERENCE DATA USING PAGEITEM UID REF.
-			InterfacePtr<IXMLReferenceData> referenceData (Utils<IXMLUtils>()->QueryXMLReferenceData(pageitemUIDRef, kFalse));
+		int itemCount = itemsOnPage.Length(); // get number of items on page
+		PMString str2 = "Number of items on page -";
+		str2.AppendNumber(itemCount);
+		CAlert::InformationAlert(str2);
 
-			XMLReference xmlRef = referenceData->GetReference(); //GET XMLREFERECE USING REFERENCE DATA.
 
-			InterfacePtr<IIDXMLElement> element(xmlRef.Instantiate());     //INSATATIATE XML ELEMENT USING XML REFERENCE. 
-			                                                        
-			PMString xmltagChildCount = "Child count-";            // XML CHILD COUNT.
-			xmltagChildCount.AppendNumber(element->GetChildCount());
-			CAlert::InformationAlert(xmltagChildCount);
-		                                                     // GET TAG NAMES.
-			PMString xmltagStringValue = "XML tag string-";
-			WideString xmlTagString = element->GetTagString();
-			xmltagStringValue.Append(xmlTagString + "->");
+		UIDRef pageitemUIDRef = itemsOnPage.GetRef(0);
+		InterfacePtr<IFrameType> frameType(pageitemUIDRef, UseDefaultIID());
 
-			for (int childCount = 0; childCount < element->GetChildCount(); childCount++) {
-				XMLReference currentChildReference = element->GetNthChild(childCount);
-				InterfacePtr<IIDXMLElement> currentChild(currentChildReference.Instantiate());
-				WideString currentTagString = currentChild->GetTagString();
-				xmltagStringValue.Append(currentTagString + ",");
-			}
+		//-------------------------------------------------------------------------------------------------------------
+		// GET XML REFERENCE DATA USING PAGEITEM UID REF.
+		InterfacePtr<IXMLReferenceData> referenceData(Utils<IXMLUtils>()->QueryXMLReferenceData(pageitemUIDRef, kFalse));
+
+		XMLReference xmlRef = referenceData->GetReference(); //GET XMLREFERECE USING REFERENCE DATA.
+
+		InterfacePtr<IIDXMLElement> element(xmlRef.Instantiate());     //INSATATIATE XML ELEMENT USING XML REFERENCE. 
+
+		PMString xmltagChildCount = "Child count-";            // XML CHILD COUNT.
+		xmltagChildCount.AppendNumber(element->GetChildCount());
+		CAlert::InformationAlert(xmltagChildCount);
+		// GET TAG NAMES.
+		PMString xmltagStringValue = "XML tag string-";
+		WideString xmlTagString = element->GetTagString();
+		xmltagStringValue.Append(xmlTagString + "->");
+
+		for (int childCount = 0; childCount < element->GetChildCount(); childCount++) {
+			XMLReference currentChildReference = element->GetNthChild(childCount);
+			InterfacePtr<IIDXMLElement> currentChild(currentChildReference.Instantiate());
+			WideString currentTagString = currentChild->GetTagString();
+			xmltagStringValue.Append(currentTagString + ",");
+		}
 		//-------------------------------------------------------------------------------------------------
-			InterfacePtr<ITextModel> textModel(Utils<IXMLUtils>()->QueryTextModel(element));
-		                                                      	// FRAME CONTENT AND FRAME CONTENT LENGTH.
-			PMString textFrameContentLength = "frame Contents length-";
-			textFrameContentLength.AppendNumber(textModel->TotalLength());
-			CAlert::InformationAlert(textFrameContentLength);
-			
-			TextIterator begin(textModel, 0);
-			TextIterator end(textModel,textModel->TotalLength());
-			WideString ws;
-			ws.reserve(textModel->TotalLength());
-			std::copy(begin, end, std::back_inserter(ws));
-		
+		InterfacePtr<ITextModel> textModel(Utils<IXMLUtils>()->QueryTextModel(element));
+		// FRAME CONTENT AND FRAME CONTENT LENGTH.
+		PMString textFrameContentLength = "frame Contents length-";
+		textFrameContentLength.AppendNumber(textModel->TotalLength());
+		CAlert::InformationAlert(textFrameContentLength);
 
-			PMString textFrameContents = "------frame Contents------\n \n";
-			textFrameContents.Append(ws);
-			CAlert::InformationAlert(textFrameContents);
+		TextIterator begin(textModel, 0);
+		TextIterator end(textModel, textModel->TotalLength());
+		WideString ws;
+		ws.reserve(textModel->TotalLength());
+		std::copy(begin, end, std::back_inserter(ws));
+
+
+		PMString textFrameContents = "------frame Contents------\n \n";
+		textFrameContents.Append(ws);
+		CAlert::InformationAlert(textFrameContents);
 
 		//-------------------------------------------------------------------------------------------------
-			PMString textFrameType = "Is text frame-";   // TYPE OF TEXT FRAME
-			bool isTextFrame = frameType->IsTextFrame();
-			if (isTextFrame) {
-				textFrameType.Append("YES");
-			
-			}
-			else {
-				textFrameType.Append("NO");
-			}
-		 //------------------------------------------------------------------------------------------------     
-			
-			CAlert::InformationAlert(textFrameType);
-			CAlert::InformationAlert(xmltagStringValue);
-					
-					
+		PMString textFrameType = "Is text frame-";   // TYPE OF TEXT FRAME
+		bool isTextFrame = frameType->IsTextFrame();
+		if (isTextFrame) {
+			textFrameType.Append("YES");
+
+		}
+		else {
+			textFrameType.Append("NO");
+		}
+		//------------------------------------------------------------------------------------------------     
+
+		CAlert::InformationAlert(textFrameType);
+		CAlert::InformationAlert(xmltagStringValue);
+
+
 		break;
 	}
-	
+
+	case kDeleteCharStyleRespService:
+	{
+		CAlert::InformationAlert("charactersytle deleted");
+		break;
 	}
-};
+	}
+	};
 
 void MyPlugin2Responder::VisitChildren(IHierarchy* parent) {
 	int childCount = parent->GetChildCount();
