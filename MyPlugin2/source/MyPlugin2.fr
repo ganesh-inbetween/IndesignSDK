@@ -99,8 +99,8 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 	
 	 AddIn
 	{
-	   kDocWorkspaceBoss,
-		kInvalidClass,
+	    kDocWorkspaceBoss,
+	   	kInvalidClass,
 		{
 
      		IID_IMYOBSERVER,	kMyPlugin2ObserverImpl,
