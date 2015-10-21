@@ -27,6 +27,10 @@
 #include "ITableModel.h"
 #include "ITableFrame.h"
 #include "IFrameType.h"
+#include "IAppearanceSuite.h"
+#include "IControlView.h"
+#include "IGraphicAttributeSuite.h"
+#include "IXMLAttributeCommands.h"
 
 CREATE_PMINTERFACE(MyPlugin2SelectionObserver, kMyPlugin2SelectionObserverImpl)
 
@@ -48,10 +52,10 @@ void MyPlugin2SelectionObserver::HandleSelectionChanged(const ISelectionMessage*
 {
 	// get selection manager for active selection.
 	ISelectionManager* iSelectionManager = Utils<ISelectionUtils>()->GetActiveSelection();
-	
+	return;
 	//get pointer to textSelectionSuite using selection manager OR fCurrentSelection.
 	InterfacePtr<ITextSelectionSuite> iTextSelectionSuite(iSelectionManager, UseDefaultIID());
-
+	CAlert::InformationAlert("Selection** changed..");
 	if (iTextSelectionSuite) {
 		//get pointer to integrator target text using textSelectionSuite.
 		//Use to  Return a list of interfaces from the "concrete selection"
@@ -96,6 +100,7 @@ void MyPlugin2SelectionObserver::HandleSelectionChanged(const ISelectionMessage*
 			{
 				// get xml reference from xml reference data.
 				XMLReference xmlRef = xmlReferenceData->GetReference();
+			
 				// obtain xml element from xml reference
 				InterfacePtr<IIDXMLElement> xmlElement(xmlRef.Instantiate());
 				if (xmlElement != nil) {
@@ -221,9 +226,27 @@ void MyPlugin2SelectionObserver::HandleSelectionChanged(const ISelectionMessage*
 	
 };
 
-void MyPlugin2SelectionObserver::HandleSelectionAttributeChanged(const ISelectionMessage* message) 
+void MyPlugin2SelectionObserver::HandleSelectionAttributeChanged(const ISelectionMessage* iSelectionMessage) 
 {
+	return;
 	//CAlert::InformationAlert("Selection Attribute changed..");
+	if(iSelectionMessage->WasSuiteAffected(IID_IAPPEARANCESUITE)){
+	//	CAlert::InformationAlert("appearacne suite");
+	}
+	if (iSelectionMessage->WasSuiteAffected(IID_IGRAPHICATTRIBUTESUITE)){
+		//CAlert::InformationAlert("Graphic suite");
+	}
+	if (iSelectionMessage->WasSuiteAffected(IID_IFORMFIELDSUITE)){
+	//	CAlert::InformationAlert("form Field suite");
+	}
+
+	InterfacePtr<IControlView> controlView(this, IID_ICONTROLVIEW);
+	if (controlView !=nil) {
+		CAlert::InformationAlert("controlView found");
+	   
+	}
+
+
 };
 
 void MyPlugin2SelectionObserver::AutoAttach()

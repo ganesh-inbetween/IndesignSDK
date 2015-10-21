@@ -23,6 +23,8 @@
 #include "textiterator.h"
 #include "MyPlugin2Responder.h"
 #include "MyPlugin2ID.h"
+#include "ILayoutUIUtils.h"
+#include "IStyleGroupManager.h"
 
 
 CREATE_PMINTERFACE(MyPlugin2Responder, kMyPlugin2ResponderImpl);
@@ -50,8 +52,33 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 		InterfacePtr<IDocument> document(docUIDRef, UseDefaultIID());
 		/*This observer is on document level and will observer the new page item/ copy page item events
 		*/
-		InterfacePtr<IObserver> docObserver(docUIDRef, IID_IMYOBSERVER);
+		InterfacePtr<IObserver> docObserver(docUIDRef, IID_IMYSELECTIONOBSERVER);
 		//InterfacePtr<IObserver> myObserver(GetExecutionContextSession(), IID_IMYOBSERVER);
+
+
+		if (docObserver != nil)
+		{
+		//	docObserver->AutoAttach();
+		//	CAlert::InformationAlert("Auto attached called");
+		}
+		else {
+		//	CAlert::InformationAlert("nill!!!!!");
+
+		}
+
+		break;
+	}
+	case kAfterOpenDocSignalResponderService://99
+	{
+		CAlert::InformationAlert("After Open document..");
+		InterfacePtr<IDocumentSignalData> documentSignalData(signalMgr, UseDefaultIID());
+		UIDRef docUIDRef = documentSignalData->GetDocument();
+		InterfacePtr<IDocument> document(docUIDRef, UseDefaultIID());
+		/*This observer is on document level and will observer the new page item/ copy page item events
+		*/
+		InterfacePtr<IObserver> docObserver(docUIDRef, IID_IMYSELECTIONOBSERVER);
+		//InterfacePtr<IObserver> myObserver(GetExecutionContextSession(), IID_IMYOBSERVER);
+
 
 		if (docObserver != nil)
 		{
@@ -65,11 +92,6 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 
 		break;
 	}
-	case kAfterOpenDocSignalResponderService://99
-	{
-		CAlert::InformationAlert("After Open document..");
-		break;
-	}
 
 
 	case kAfterSaveDocSignalResponderService:
@@ -77,18 +99,18 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 		CAlert::InformationAlert("Document Saved..");
 
 
-		InterfacePtr<IDocumentSignalData> documentSignalData(signalMgr, UseDefaultIID());
+		InterfacePtr<IDocumentSignalData> documentSignalData(signalMgr,UseDefaultIID());
 		UIDRef docUIDRef = documentSignalData->GetDocument();
 		InterfacePtr<IDocument> document(docUIDRef, UseDefaultIID());
 
-		CAlert::InformationAlert("Before workspace");
+	//	CAlert::InformationAlert("Before workspace");
 		UIDRef docWorkSpaceRef = document->GetDocWorkSpace();
 
 		if (docWorkSpaceRef != nil)
 		{
-			CAlert::InformationAlert("Auto attached doc ws1 called");
+		//	CAlert::InformationAlert("Auto attached doc ws1 called");
 			InterfacePtr<IObserver> docWorkSpaceObserver(docWorkSpaceRef, IID_IMYOBSERVER);
-			CAlert::InformationAlert("Auto attached doc ws called");
+		//	CAlert::InformationAlert("Auto attached doc ws called");
 			if (docWorkSpaceObserver != nil) {
 				docWorkSpaceObserver->AutoAttach();
 			}
@@ -96,6 +118,24 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 				CAlert::InformationAlert("docworkspaceRef is nil");
 			}
 
+		//	InterfacePtr<IObserver> docWorkSpaceSelObserver(docWorkSpaceRef, IID_IMYSELECTIONOBSERVER);
+			//	CAlert::InformationAlert("Auto attached doc ws called");
+			//if (docWorkSpaceSelObserver != nil) {
+			//	docWorkSpaceSelObserver->AutoAttach();
+		//	}
+			//else {
+			//	CAlert::InformationAlert("docworkspaceRef is nil");
+			//}
+
+
+			//InterfacePtr<IStyleGroupManager> styleMgr(docWorkSpaceRef, IID_IPARASTYLEGROUPMANAGER);
+			
+			//InterfacePtr<IObserver> styleObserver((IPMUnknown *)styleMgr, IID_IMYOBSERVER);
+
+
+			//if (styleObserver != nil) {
+			//	styleObserver->AutoAttach();
+			//}
 		}
 		else {
 			CAlert::InformationAlert("nill!!!!!");
@@ -113,7 +153,7 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 		int noOfPages = spread->GetNumPages();// get number of pages
 		PMString str1 = "Number of pages - ";
 		str1.AppendNumber(noOfPages);
-		CAlert::InformationAlert(str1);
+	//	CAlert::InformationAlert(str1);
 
 
 		UIDList itemsOnPage(database);
@@ -125,7 +165,7 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 		int itemCount = itemsOnPage.Length(); // get number of items on page
 		PMString str2 = "Number of items on page -";
 		str2.AppendNumber(itemCount);
-		CAlert::InformationAlert(str2);
+	//	CAlert::InformationAlert(str2);
 
 
 		UIDRef pageitemUIDRef = itemsOnPage.GetRef(0);
@@ -141,7 +181,7 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 
 		PMString xmltagChildCount = "Child count-";            // XML CHILD COUNT.
 		xmltagChildCount.AppendNumber(element->GetChildCount());
-		CAlert::InformationAlert(xmltagChildCount);
+	//	CAlert::InformationAlert(xmltagChildCount);
 		// GET TAG NAMES.
 		PMString xmltagStringValue = "XML tag string-";
 		WideString xmlTagString = element->GetTagString();
@@ -158,7 +198,7 @@ void MyPlugin2Responder::Respond(ISignalMgr* signalMgr)
 		// FRAME CONTENT AND FRAME CONTENT LENGTH.
 		PMString textFrameContentLength = "frame Contents length-";
 		textFrameContentLength.AppendNumber(textModel->TotalLength());
-		CAlert::InformationAlert(textFrameContentLength);
+	//	CAlert::InformationAlert(textFrameContentLength);
 
 		TextIterator begin(textModel, 0);
 		TextIterator end(textModel, textModel->TotalLength());
